@@ -7,8 +7,6 @@
 const util = require('util');
 const Promise = require('bluebird');
 const elasticsearch = require('elasticsearch');
-const promistreamus = require('promistreamus');
-const qidx = require('quadtile-index');
 const checkType = require('@kartotherian/input-validator');
 const Err = require('@kartotherian/err');
 const pckg = require('./package.json');
@@ -64,7 +62,9 @@ class ElasticSearch {
         case undefined:
         case 'tile':
           return Promise.try(() => {
-            if (opts.z < this.minzoom || opts.z > this.maxzoom) Err.throwNoTile();
+            if (opts.z < this.minzoom || opts.z > this.maxzoom) {
+              Err.throwNoTile();
+            }
             return this._getTileAsync(ElasticSearch._makeId(opts.z, opts.x, opts.y));
           }).then(data => {
             if (!data) Err.throwNoTile();
@@ -90,7 +90,7 @@ class ElasticSearch {
               }
             });
         default:
-          throw new Err('unknown type ' + opts.type);
+          throw new Err(`unknown type "${opts.type}"`);
           break;
       }
     });

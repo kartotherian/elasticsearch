@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/kartotherian/cassandra.svg?branch=master)](https://travis-ci.org/kartotherian/cassandra)
+[![Build Status](https://travis-ci.org/kartotherian/elasticsearch.svg?branch=master)](https://travis-ci.org/kartotherian/elasticsearch)
 
-# @kartotherian/cassandra
-Cassandra tile storage for Kartotherian map tile server
+# @kartotherian/elasticsearch
+ElasticSearch tile storage for Kartotherian map tile server
 
 See https://github.com/kartotherian/kartotherian
