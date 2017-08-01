@@ -14,7 +14,7 @@ describe('Tests', function() {
   });
 
   const host = 'localhost:9200';
-  const log = 'debug';
+  const log = 'error'; // 'debug';
   const esClient = new elasticsearch.Client({host/*, log*/});
 
   const tilelive = {
@@ -111,10 +111,14 @@ describe('Tests', function() {
 
   it('tile', () => runTest(
     inst => Promise.resolve()
+
+      // get non-existent tile
       .then(() => inst.getAsync({z: 0, x: 0, y: 0}))
       .then(
         () => assert.fail('should not exist'),
         (err) => assert(Err.isNoTileError(err), 'must be isNoTileError'))
+
+      // save dummy tile
       .then(() => inst.putTileAsync(0, 0, 0, new Buffer('abc')))
       .then(() => inst.getAsync({z: 0, x: 0, y: 0}))
       .then((res) => {
@@ -126,5 +130,36 @@ describe('Tests', function() {
               'Content-Encoding': 'gzip'
             }
           });
-      })));
+      })
+
+      // save dummy tile 2
+      .then(() => inst.putTileAsync(22, 123456, 654321, new Buffer('xyz')))
+      .then(() => inst.getAsync({z: 22, x: 123456, y: 654321}))
+      .then((res) => {
+        assert.deepStrictEqual(res,
+          {
+            data: new Buffer('xyz'),
+            headers: {
+              'Content-Type': 'application/x-protobuf',
+              'Content-Encoding': 'gzip'
+            }
+          });
+      })
+
+      // delete dummy tile
+      .then(() => inst.putTileAsync(0, 0, 0, null))
+      .then(() => inst.getAsync({z: 0, x: 0, y: 0}))
+      .then(
+        () => assert.fail('should not exist'),
+        (err) => assert(Err.isNoTileError(err), 'must be isNoTileError'))
+  ));
+
+  it('err-idx', () => runTest(
+    inst => Promise.resolve()
+      .then(() => inst.putTileAsync(-1, 0, 0, null))
+      .then(
+        () => assert.fail('should throw'),
+        (err) => assert.strictEqual(err.message,
+          new Err('This ElasticSearch source cannot save zoom %d, because its configured for zooms %d..%d', -1, 0, 22).message))
+  ));
 });
