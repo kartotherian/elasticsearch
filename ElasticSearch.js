@@ -146,7 +146,7 @@ class ElasticSearch {
 
       opt.body = {data: data.toString('base64')};
       if (!this.batchMode || !this.maxBatchSize) {
-        return this.client.create(opt);
+        return this.client.index(opt);
       } else {
         throw new Err('bulk not implemented');
         // this.batch.push({query: query, params: params});
