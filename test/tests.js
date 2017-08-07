@@ -3,7 +3,7 @@
 const assert = require('assert');
 const Promise = require('bluebird');
 const elasticsearch = require('elasticsearch');
-const lib = require('../ElasticSearch');
+const lib = require('../Elasticsearch');
 const Err = require('@kartotherian/err');
 
 describe('Tests', function() {
@@ -160,6 +160,6 @@ describe('Tests', function() {
       .then(
         () => assert.fail('should throw'),
         (err) => assert.strictEqual(err.message,
-          new Err('This ElasticSearch source cannot save zoom %d, because its configured for zooms %d..%d', -1, 0, 22).message))
+          new Err('This Elasticsearch source cannot save zoom %d, because its configured for zooms %d..%d', -1, 0, 22).message))
   ));
 });

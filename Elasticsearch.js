@@ -1,7 +1,7 @@
 'use strict';
 
 /*
- ElasticSearch tile storage source for Kartotherian
+ Elasticsearch tile storage source for Kartotherian
  */
 
 const util = require('util');
@@ -14,7 +14,7 @@ const uptile = require('tilelive-promise');
 
 let prepared = {prepare: true};
 
-class ElasticSearch {
+class Elasticsearch {
   constructor(uri) {
     uptile(this);
     this.batchMode = 0;
@@ -65,7 +65,7 @@ class ElasticSearch {
             if (opts.z < this.minzoom || opts.z > this.maxzoom) {
               Err.throwNoTile();
             }
-            return this._getTileAsync(ElasticSearch._makeId(opts.z, opts.x, opts.y));
+            return this._getTileAsync(Elasticsearch._makeId(opts.z, opts.x, opts.y));
           }).then(data => {
             if (!data) Err.throwNoTile();
             return {data, headers: this.headers};
@@ -81,7 +81,7 @@ class ElasticSearch {
                 return {
                   data: {
                     'tilejson': '2.1.0',
-                    'name': 'ElasticSearch ' + pckg.version,
+                    'name': 'Elasticsearch ' + pckg.version,
                     'bounds': '-180,-85.0511,180,85.0511',
                     'minzoom': this.minzoom,
                     'maxzoom': this.maxzoom
@@ -130,10 +130,10 @@ class ElasticSearch {
   putTileAsync(z, x, y, data) {
     return Promise.try(() => {
       if (z < this.minzoom || z > this.maxzoom) {
-        throw new Err('This ElasticSearch source cannot save zoom %d, because its configured for zooms %d..%d',
+        throw new Err('This Elasticsearch source cannot save zoom %d, because its configured for zooms %d..%d',
           z, this.minzoom, this.maxzoom);
       }
-      return this._putTileAsync(ElasticSearch._makeId(z, x, y), data);
+      return this._putTileAsync(Elasticsearch._makeId(z, x, y), data);
     });
   }
 
@@ -204,11 +204,11 @@ class ElasticSearch {
   static registerProtocols(tilelive) {
     tilelive.protocols['elasticsearch:'] = (uri, callback) => {
       return Promise.try(() => {
-        const es = new ElasticSearch(uri);
+        const es = new Elasticsearch(uri);
         return es.init();
       }).nodeify(callback);
     }
   }
 }
 
-module.exports = ElasticSearch;
+module.exports = Elasticsearch;
