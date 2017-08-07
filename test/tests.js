@@ -6,6 +6,10 @@ const elasticsearch = require('elasticsearch');
 const lib = require('../Elasticsearch');
 const Err = require('@kartotherian/err');
 
+/**
+ * This test will attempt to connect to the elasticsearch instance runnign on the localhost.
+ * Each test will create a new index (verifying that it doesn't already exist), and cleanup afterwards.
+ */
 describe('Tests', function() {
 
   Promise.config({
@@ -37,12 +41,14 @@ describe('Tests', function() {
         });
     };
 
-    return tryOne();
+    return esClient.ping().catch(err => {
+      throw new Error(`Unable to PING localhost elasticsearch instance. Is it running?\n     ${err}`);
+    }).then(tryOne);
   }
 
   function cleanup(index) {
     if (index === undefined) {
-      return;
+      return Promise.resolve();
     }
     return esClient.indices
       .delete({index})
