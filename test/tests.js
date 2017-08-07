@@ -42,7 +42,7 @@ describe('Tests', function() {
     };
 
     return esClient.ping().catch(err => {
-      throw new Error(`Unable to PING localhost elasticsearch instance. Is it running?\n     ${err}`);
+      throw new Error(`Unable to PING elasticsearch instance at ${host}. Is it running?\n     ${err}`);
     }).then(tryOne);
   }
 
